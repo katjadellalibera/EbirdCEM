@@ -50,14 +50,14 @@ func main() {
 			location := [2]float32{latitude, longitude}
 			// add one to the total of observations in the square
 			temp := counts[location]
-			temp[0] += 1
+			temp[0] ++
 			// This adds the count for a particular bird to the total at the location
 			speciesint, errspecies := strconv.ParseInt(l[3915], 10, 32)
 			if errspecies != nil {
 				continue
 			}
 			if speciesint > 0 {
-				temp[1] += 1
+				temp[1] ++
 			}
 			counts[location] = temp
 		}
@@ -72,9 +72,9 @@ func main() {
 	resultWriter := csv.NewWriter(resultFile)
 	// iterate through every location and write the coordinates and values
 	for location, value := range counts {
-		lat := strconv.FormatFloat(location[0], 'E', -1, 64)
-		long := strconv.FormatFloat(location[1], 'E', -1, 64)
-		resultWriter.Write([4]string{lat, long, strconv.Itoa(value[0]), strconv.Itoa(value[1])})
+		lat := strconv.FormatFloat(float64(location[0]), 'E', -1, 32)
+		long := strconv.FormatFloat(float64(location[1]), 'E', -1, 32)
+		resultWriter.Write([]string{lat, long, strconv.Itoa(value[0]), strconv.Itoa(value[1])})
 	}
 	resultWriter.Flush()
 	resultFile.Close()
