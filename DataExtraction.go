@@ -12,9 +12,10 @@ import (
 )
 
 func main() {
+	// set data directory that files will be exported to
 	dataDir := "C:\\Users\\katjad\\Desktop\\Random\\ebirdData\\eBirdDataGo"
 	// creating layers of Readers to extract the data from the compressed file without decompressing it
-	filepath := "C:\\Users\\katjad\\Desktop\\Random\\ebirdData\\ebird_reference_dataset_v2016_western_hemisphere.tar\\ebird_reference_dataset_v2016_western_hemisphere\\ERD2016SS\\2002\\checklists.csv.gz"
+	filepath := "C:\\Users\\katjad\\Desktop\\Random\\ebirdData\\ebird_reference_dataset_v2016_western_hemisphere.tar\\ebird_reference_dataset_v2016_western_hemisphere\\ERD2016SS\\2003\\checklists.csv.gz"
 	file, _ := os.Open(filepath)
 	gzipReader, _ := gzip.NewReader(file)
 	csvReader := csv.NewReader(gzipReader)
@@ -50,15 +51,17 @@ func main() {
 			location := [2]float32{latitude, longitude}
 			// add one to the total of observations in the square
 			temp := counts[location]
-			temp[0] ++
+			temp[0]++
 			// This adds the count for a particular bird to the total at the location
 			speciesint, errspecies := strconv.ParseInt(l[3915], 10, 32)
 			if errspecies != nil {
 				continue
 			}
+			// add 1 for every non-zero sighting
 			if speciesint > 0 {
-				temp[1] ++
+				temp[1]++
 			}
+			// update the map for the given location
 			counts[location] = temp
 		}
 	}
@@ -68,7 +71,7 @@ func main() {
 	fmt.Println(len(counts))
 
 	// Create a csv file to export to
-	resultFile, _ := os.Create(path.Join(dataDir, "red_breasted.csv"))
+	resultFile, _ := os.Create(path.Join(dataDir, "red_breasted_2003.csv"))
 	resultWriter := csv.NewWriter(resultFile)
 	// iterate through every location and write the coordinates and values
 	for location, value := range counts {
@@ -79,11 +82,6 @@ func main() {
 	resultWriter.Flush()
 	resultFile.Close()
 
-	/*for i := 0; i < 1; i++ {
-		l, _ := csvReader.Read()
-		fmt.Println(l[0:20])
-	}
-	*/
 }
 
 /*
